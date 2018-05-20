@@ -2,8 +2,14 @@ from flask import Flask
 from flask import redirect
 from flask import make_response
 from flask import abort
+# from flask.ext.script import Manager # old version
+from flask_script import Manager
+from flask import render_template
+from flask_bootstraps import Bootstrap
 
 app = Flask(__name__)
+manager = Manager(app)
+bootstrap=Bootstrap(app)
 
 
 # @app.route('/')
@@ -12,9 +18,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    response = make_response('<h1>This document carries a cookie!</h1>')
-    response.set_cookie('answer', '44')
-    return response
+    return render_template('index.html')
 
 
 @app.route('/redirect')
@@ -22,11 +26,12 @@ def redirects():
     return redirect('http://www.example.com')
 
 
-@app.route('/user/<int:name>')
+@app.route('/user/<string:name>')
 def welcome(name):
     # abort(404)
-    return '<h1>Hello %s!</h1>' % name
+    return render_template('user.html', name=name)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    manager.run()
