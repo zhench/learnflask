@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,session,url_for
 from flask import redirect
 from flask import make_response
 from flask import abort
@@ -9,7 +9,7 @@ from flask_bootstraps import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 import time
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
@@ -20,7 +20,7 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 
 
-class NameForm(Form):
+class NameForm(FlaskForm):
     name = StringField('What is you name?', validators=[DataRequired()])
     submit = SubmitField('Submit ')
 
@@ -35,9 +35,13 @@ def index():
     name=None
     form=NameForm()
     if form.validate_on_submit():
-        name=form.name.data
-        form.name.data=''
-    return render_template('index.html', form=form,name=name )
+        name=session['name']=form.name.data
+        return redirect(url_for('index'))
+    try:
+        name=session['name']
+    except KeyError:
+        name=''
+    return render_template('index.html', form=form,name=name)
 
 
 @app.route('/redirect')
