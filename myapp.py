@@ -9,24 +9,35 @@ from flask_bootstraps import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 import time
+from flask_wtf import Form
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+
+
+class NameForm(Form):
+    name = StringField('What is you name?', validators=[DataRequired()])
+    submit = SubmitField('Submit ')
 
 
 # @app.route('/')
 # def hello_world():
 #    return '<h1>Hello World!</h1>', 200
 
-@app.route('/')
+@app.route('/',methods=['GET','POST'])
 def index():
     print(datetime.utcnow())
-    dtime = datetime.utcnow()
-    un_time = time.mktime(dtime.timetuple())
-    print(un_time)
-    return render_template('index.html', current_time=dtime)
+    name=None
+    form=NameForm()
+    if form.validate_on_submit():
+        name=form.name.data
+        form.name.data=''
+    return render_template('index.html', form=form,name=name )
 
 
 @app.route('/redirect')

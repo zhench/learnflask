@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Flask Index{% endblock %}
+
 {% block page_content %}
     <div class="page-header">
-        <p>{{ current_time }}</p>
-        <p>The local date and time is {{ moment(timestamp=current_time).format('LLL') }}</p>
-        <p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
-        <p>{{ moment().calendar() }}</p>
-        <p>The current date and time is: {{ moment(current_time).format('MMMM Do YYYY, h:mm:ss a') }}.</p>
-        <p>Something happened {{ moment(current_time).fromTime(current_time) }}.</p>
-        <p>{{ moment(current_time) }}.</p>
+        <h1>Hello,{% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
     </div>
+    {{ wtf.quick_form(form) }}
 {% endblock %}
