@@ -1,4 +1,4 @@
-from flask import Flask,session,url_for
+from flask import Flask, session, url_for, flash
 from flask import redirect
 from flask import make_response
 from flask import abort
@@ -29,19 +29,24 @@ class NameForm(FlaskForm):
 # def hello_world():
 #    return '<h1>Hello World!</h1>', 200
 
-@app.route('/',methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     print(datetime.utcnow())
-    name=None
-    form=NameForm()
-    if form.validate_on_submit():
-        name=session['name']=form.name.data
-        return redirect(url_for('index'))
+    name = None
+    form = NameForm()
     try:
-        name=session['name']
+        if form.validate_on_submit():
+            old_name = session['name']
+            print(old_name)
+            if old_name is not None and old_name != form.name.data:
+                flash('Looks like you have changed your name')
+            session['name'] = form.name.data
+            return redirect(url_for('index'))
+
+        name = session['name']
     except KeyError:
-        name=''
-    return render_template('index.html', form=form,name=name)
+        name = session['name']=''
+    return render_template('index.html', form=form, name=name)
 
 
 @app.route('/redirect')
