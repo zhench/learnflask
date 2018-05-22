@@ -12,12 +12,22 @@ import time
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True
+
+db=SQLAlchemy(app)
 
 
 class NameForm(FlaskForm):
@@ -45,7 +55,7 @@ def index():
 
         name = session['name']
     except KeyError:
-        name = session['name']=''
+        name = session['name'] = ''
     return render_template('index.html', form=form, name=name)
 
 
